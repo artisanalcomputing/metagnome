@@ -42,12 +42,12 @@ public:
     };
 
 private:
-    TextButton playButton { "Play" };
-    TextButton stopButton { "Stop" };
+    TextButton mPlayButton { "Play" };
+    TextButton mStopButton { "Stop" };
     
-    PlayState playState { PlayState::Stopped };
+    PlayState mPlayState { PlayState::Stopped };
     
-    Metagnome metagnome;
+    Metagnome mMetagnome;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

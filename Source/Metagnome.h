@@ -12,15 +12,19 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Metagnome
+class Metagnome : public HighResolutionTimer
 {
 public:
     void prepareToPlay (double sampleRate);
     void countSamples (int bufferSize);
     void reset();
     
+    void hiResTimerCallback() override;
+    
 private:
     int mTotalSamples { 0 };
     double mSampleRate { 0 };
-    
+    int mInterval { 0 };
+    double mBpm { 60.0 };
+    int mSamplesRemaining { 0 };
 };
