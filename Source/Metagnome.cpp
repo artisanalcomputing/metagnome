@@ -10,15 +10,43 @@
 
 #include "Metagnome.h"
 
-void Metagnome::prepareToPlay(double sampleRate)
+Metagnome::Metagnome()
+{
+    mFormatManager.registerBasicFormats();
+    
+    File myFile { File::getSpecialLocation(File::SpecialLocationType::userDesktopDirectory) };
+    auto mySamples = myFile.findChildFiles(File::TypesOfFileToFind::findFiles, true, "9744__horn__typewriter.wav");
+    
+    jassert(mySamples[0].exists());
+    
+    auto formatReader = mFormatManager.createReaderFor(mySamples[0]);
+    
+    pMetronomeSample.reset(new AudioFormatReaderSource(formatReader, true));
+    
+//    if (mySamples[0].exists())
+//    {
+//        //load file
+//    }
+//    else {
+//        //warning
+//    }
+}
+
+void Metagnome::prepareToPlay(int samplesPerBlock, double sampleRate)
 {
     mSampleRate = sampleRate;
     mInterval = 60.0 / mBpm * mSampleRate;
     HighResolutionTimer::startTimer(60.0);
+    
+    if (pMetronomeSample != nullptr) {
+        pMetronomeSample->prepareToPlay(samplesPerBlock, sampleRate);
+    }
 }
 
-void Metagnome::countSamples(int bufferSize)
+void Metagnome::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
 {
+    auto bufferSize = bufferToFill.numSamples;
+    
     mTotalSamples+=bufferSize;
     mSamplesRemaining = mTotalSamples % mInterval;
     
@@ -29,7 +57,11 @@ void Metagnome::countSamples(int bufferSize)
     if ((mSamplesRemaining + bufferSize) >= mInterval) {
         DBG("CLICK!!!");
         DBG("Total Samples: " << mTotalSamples);
+//        pMetronomeSample->prepareToPlay(samplesPerBlock, sampleRate);
     }
+    
+//    pMetronomeSample->getNextAudioBlock(<#const AudioSourceChannelInfo &#>);
+    pMetronomeSample->getNextAudioBlock(bufferToFill);
 }
 
 void Metagnome::reset()

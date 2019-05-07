@@ -15,8 +15,9 @@
 class Metagnome : public HighResolutionTimer
 {
 public:
-    void prepareToPlay (double sampleRate);
-    void countSamples (int bufferSize);
+    Metagnome();
+    void prepareToPlay (int samplesPerBlock, double sampleRate);
+    void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill);
     void reset();
     
     void hiResTimerCallback() override;
@@ -27,4 +28,7 @@ private:
     int mInterval { 0 };
     double mBpm { 60.0 };
     int mSamplesRemaining { 0 };
+    
+    AudioFormatManager mFormatManager;
+    std::unique_ptr <AudioFormatReaderSource> pMetronomeSample {nullptr};
 };

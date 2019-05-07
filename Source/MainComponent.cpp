@@ -59,18 +59,18 @@ void MainComponent::stop()
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    mMetagnome.prepareToPlay(sampleRate);
+    mMetagnome.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
     bufferToFill.clearActiveBufferRegion();
     
-    auto buffer = bufferToFill.numSamples;
+//    auto buffer = bufferToFill.numSamples;
     
     if(mPlayState == PlayState::Playing)
     {
-        mMetagnome.countSamples(buffer);
+        mMetagnome.getNextAudioBlock(bufferToFill);
     } 
 }
 
