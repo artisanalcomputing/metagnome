@@ -59,14 +59,17 @@ void Metagnome::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
         DBG("Total Samples: " << mTotalSamples);
 //        pMetronomeSample->prepareToPlay(samplesPerBlock, sampleRate);
     }
-    
-//    pMetronomeSample->getNextAudioBlock(<#const AudioSourceChannelInfo &#>);
     pMetronomeSample->getNextAudioBlock(bufferToFill);
 }
 
 void Metagnome::reset()
 {
     mTotalSamples = 0;
+}
+
+void Metagnome::releaseResources()
+{
+    pMetronomeSample->releaseResources();
 }
 
 void Metagnome::hiResTimerCallback()

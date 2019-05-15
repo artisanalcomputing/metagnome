@@ -80,6 +80,7 @@ void MainComponent::releaseResources()
     // restarted due to a setting change.
 
     // For more details, see the help for AudioProcessor::releaseResources()
+    mMetagnome.releaseResources();
 }
 
 //==============================================================================

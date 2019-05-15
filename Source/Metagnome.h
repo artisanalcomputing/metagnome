@@ -19,6 +19,7 @@ public:
     void prepareToPlay (int samplesPerBlock, double sampleRate);
     void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill);
     void reset();
+    void releaseResources();
     
     void hiResTimerCallback() override;
     
