@@ -22,6 +22,7 @@ Metagnome::Metagnome()
     auto formatReader = mFormatManager.createReaderFor(mySamples[0]);
     
     pMetronomeSample.reset(new AudioFormatReaderSource(formatReader, true));
+    mInterval = 60.0 / mBpm * mSampleRate;
     
 //    if (mySamples[0].exists())
 //    {
@@ -36,7 +37,6 @@ void Metagnome::prepareToPlay(int samplesPerBlock, double sampleRate)
 {
     mSampleRate = sampleRate;
     mInterval = 60.0 / mBpm * mSampleRate;
-    HighResolutionTimer::startTimer(60.0);
     
     if (pMetronomeSample != nullptr) {
         pMetronomeSample->prepareToPlay(samplesPerBlock, sampleRate);
@@ -45,21 +45,29 @@ void Metagnome::prepareToPlay(int samplesPerBlock, double sampleRate)
 
 void Metagnome::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
 {
-    auto bufferSize = bufferToFill.numSamples;
+    const auto bufferSize = bufferToFill.numSamples;
     
     mTotalSamples+=bufferSize;
     mSamplesRemaining = mTotalSamples % mInterval;
     
-    DBG("Samples Remaining: " << mSamplesRemaining);
-    DBG("Beat Interval: " << mInterval);
     
     // look at upcoming buffer before sample resets.
     if ((mSamplesRemaining + bufferSize) >= mInterval) {
-        DBG("CLICK!!!");
-        DBG("Total Samples: " << mTotalSamples);
-//        pMetronomeSample->prepareToPlay(samplesPerBlock, sampleRate);
+        const auto timeToStartPlaying = mInterval - mSamplesRemaining;
+        pMetronomeSample->setNextReadPosition(0);
+        
+        for (auto sample = 0; sample < bufferSize; sample++) {
+            if (sample == timeToStartPlaying){
+                pMetronomeSample->getNextAudioBlock(bufferToFill);
+            }
+            
+        }
     }
-    pMetronomeSample->getNextAudioBlock(bufferToFill);
+    
+    if (pMetronomeSample->getNextReadPosition() !=0)
+    {
+        pMetronomeSample->getNextAudioBlock(bufferToFill);
+    }
 }
 
 void Metagnome::reset()
@@ -70,9 +78,4 @@ void Metagnome::reset()
 void Metagnome::releaseResources()
 {
     pMetronomeSample->releaseResources();
-}
-
-void Metagnome::hiResTimerCallback()
-{
-    mInterval = 60.0 / mBpm * mSampleRate;
 }

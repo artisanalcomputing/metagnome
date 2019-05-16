@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Metagnome : public HighResolutionTimer
+class Metagnome
 {
 public:
     Metagnome();
@@ -20,8 +20,6 @@ public:
     void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill);
     void reset();
     void releaseResources();
-    
-    void hiResTimerCallback() override;
     
 private:
     int mTotalSamples { 0 };
